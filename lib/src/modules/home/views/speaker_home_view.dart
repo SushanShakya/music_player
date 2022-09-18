@@ -1,13 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:music_player/constants/assets.dart';
+import 'package:music_player/src/modules/common/components/tap_effect.dart';
+import 'package:music_player/src/modules/home/blocs/home_bloc.dart';
+import 'package:music_player/src/modules/home/components/player_buttons_widget.dart';
+import 'package:music_player/src/modules/home/components/volume_btn.dart';
+import 'package:music_player/src/res/colors.dart';
 
-class SpeakerHomeView extends StatelessWidget {
+class SpeakerHomeView extends StatefulWidget {
+  @override
+  State<SpeakerHomeView> createState() => _SpeakerHomeViewState();
+}
+
+class _SpeakerHomeViewState extends State<SpeakerHomeView> {
+  late HomeBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = Get.put(HomeBloc());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff1B1B1D),
+      backgroundColor: scaffoldColor,
       body: SafeArea(
         child: Column(
-          children: const [],
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(40),
+                child: TapEffect(
+                  onClick: () {},
+                  child: Image.asset(Assets.speaker),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: PlayerButtonWidget(),
+                  ),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (c, box) => VolumeBtn(
+                        size: box.maxWidth - 20,
+                        percentage: 0.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
