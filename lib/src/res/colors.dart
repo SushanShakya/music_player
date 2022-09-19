@@ -9,3 +9,4 @@ const scaffoldColor = Color(0xff1B1B1D);
 const btnColor1 = Color(0xff04E0E3);
 const btnColor2 = Color(0xff10B8BA);
 const volumeColor = Color(0xff333333);
+const bgColor = Color(0xfffafafa);

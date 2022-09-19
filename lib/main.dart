@@ -1,11 +1,16 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:music_player/src/modules/songs/views/songs_listing_view.dart';
+import 'package:flutter/services.dart';
+import 'package:music_player/src/modules/songs/components/floating_song_indicator.dart';
+import 'package:music_player/src/res/dimens.dart';
 import 'package:music_player/src/services/sound/sound_handler.dart';
+
+import 'src/modules/home/views/default_home_view.dart';
 
 late SoundHandler audioHandler;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   audioHandler = await AudioService.init(
     builder: () => SoundHandler(),
     config: const AudioServiceConfig(
@@ -14,6 +19,10 @@ void main() async {
       androidNotificationOngoing: true,
     ),
   );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(MusicPlayer());
 }
 
@@ -27,7 +36,30 @@ class MusicPlayer extends StatelessWidget {
         fontFamily: 'Poppins',
       ),
       debugShowCheckedModeBanner: false,
-      home: SongsListingView(),
+      home: ClipRRect(
+        borderRadius: BorderRadius.circular(appBorderRadius),
+        child: DefaultHomeView(),
+      ),
+    );
+  }
+}
+
+class Dummy extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Center(child: FloatingSongIndicator()),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,6 @@
-import 'package:audio_query/audio_query.dart';
 import 'package:get/get.dart';
 import 'package:music_player/main.dart';
+import 'package:music_player/src/modules/songs/models/song_model.dart';
 import 'package:music_player/src/services/sound/sound_handler.dart';
 
 class SongPlayBloc extends GetxController {
@@ -18,7 +18,7 @@ class SongPlayBloc extends GetxController {
     isPlaying(!isPlaying.value);
   }
 
-  void playSong(SongInfo song) {
+  void playSong(SongModel song) {
     _player.setSong(song).then((value) => _player.play());
   }
 

@@ -4,8 +4,25 @@ const normalStyle = TextStyle(
   fontSize: 14,
 );
 
+const headerStyle = TextStyle(
+  fontSize: 25,
+  fontWeight: FontWeight.w600,
+);
+
 const titleStyle = TextStyle(
-  fontSize: 35,
+  fontSize: 20,
+  fontWeight: FontWeight.w600,
+);
+
+const smalltitleStyle = TextStyle(
+  fontSize: 18,
+  fontWeight: FontWeight.w600,
+);
+
+var subtitleStyle = TextStyle(
+  fontSize: 12,
+  height: 1.3,
+  color: Colors.black.withOpacity(0.6),
 );
 
 const boldStyle = TextStyle(

@@ -1,17 +1,7 @@
-import 'package:audio_query/audio_query.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
-
-extension MediaAdapter on SongInfo {
-  MediaItem toMediaItem() {
-    return MediaItem(
-      id: id,
-      title: title,
-      displayTitle: displayName,
-      artUri: Uri.parse('content://media/external/audio/media/$id/albumart'),
-    );
-  }
-}
+import 'package:music_player/src/modules/songs/adapters/media_item_adapter.dart';
+import 'package:music_player/src/modules/songs/models/song_model.dart';
 
 class SoundHandler extends BaseAudioHandler with SeekHandler {
   late AudioPlayer _player;
@@ -49,8 +39,8 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
     _player = AudioPlayer()..playbackEventStream.listen(_broadcastState);
   }
 
-  Future<void> setSong(SongInfo song) async {
-    mediaItem.add(song.toMediaItem());
+  Future<void> setSong(SongModel song) async {
+    mediaItem.add(MediaItemAdapter.fromSongModel(song).data);
     await _player.setAudioSource(ProgressiveAudioSource(Uri.parse(song.uri)));
   }
 

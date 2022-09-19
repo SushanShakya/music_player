@@ -1,18 +1,14 @@
-import 'dart:typed_data';
-
-import 'package:audio_query/audio_query.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:music_player/src/extensions/str_extension.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
 
-import 'package:music_player/src/modules/songs/blocs/song_fetch_bloc.dart';
 import 'package:music_player/src/modules/songs/blocs/song_play_bloc.dart';
-
-import '../../common/components/squircle_border.dart';
+import 'package:music_player/src/modules/songs/components/song_image.dart';
+import 'package:music_player/src/modules/songs/models/song_model.dart';
+import 'package:music_player/src/res/styles.dart';
 
 class SongWidget extends StatelessWidget {
-  final SongInfo song;
+  final SongModel song;
   const SongWidget({
     Key? key,
     required this.song,
@@ -26,48 +22,16 @@ class SongWidget extends StatelessWidget {
       },
       child: Row(
         children: [
-          _Image(id: song.id),
+          SongImage(song: song),
           const SizedBox(width: 10),
           Expanded(
             child: _Content(
-              title: song.displayName,
-              subtitle: song.title,
-              duration: song.duration.durationFormat,
+              title: song.title,
+              subtitle: song.subtitle,
+              duration: song.fomattedDuration,
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _Image extends StatelessWidget {
-  final String id;
-  const _Image({
-    Key? key,
-    required this.id,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final ctrl = Get.find<SongFetchBloc>();
-    return SizedBox(
-      height: width * 0.25,
-      width: width * 0.25,
-      child: Material(
-        shape: const SquircleBorder(
-          side: BorderSide(color: Colors.black),
-        ),
-        child: FutureBuilder<Uint8List>(
-          future: ctrl.fetchArtwork(id, width * 0.25),
-          builder: (c, s) {
-            if (s.hasData) {
-              if (s.data!.isEmpty) return Container();
-              return Image.memory(s.data!);
-            }
-            return Container();
-          },
-        ),
       ),
     );
   }
@@ -92,19 +56,12 @@ class _Content extends StatelessWidget {
         Text(
           title,
           maxLines: 1,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: titleStyle,
         ),
         Text(
           subtitle,
           maxLines: 2,
-          style: const TextStyle(
-            fontSize: 12,
-            height: 1.3,
-            color: Color(0xffBEBEBE),
-          ),
+          style: subtitleStyle,
         ),
         const Divider(thickness: 2),
         Row(

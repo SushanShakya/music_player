@@ -17,6 +17,9 @@ dependencies:
   get_it: ^7.2.0
   just_audio: ^0.9.29
   audio_service: ^0.18.7
+  android_content_provider: ^0.2.2
+  font_awesome_flutter: ^10.2.1
+  sticky_headers: ^0.2.0
 
 dev_dependencies:
   flutter_test:

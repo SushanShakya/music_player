@@ -18,7 +18,7 @@ class TapEffect extends StatefulWidget {
 
 class _TapEffectState extends State<TapEffect>
     with SingleTickerProviderStateMixin {
-  AnimationController? animationController;
+  late AnimationController animationController;
   DateTime tapTime = DateTime.now();
   bool isProgress = false;
 
@@ -26,21 +26,22 @@ class _TapEffectState extends State<TapEffect>
   void initState() {
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 800));
-    animationController!.animateTo(1.0,
+    animationController.animateTo(1.0,
         duration: const Duration(milliseconds: 0), curve: Curves.fastOutSlowIn);
     super.initState();
   }
 
   @override
   void dispose() {
-    animationController?.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
   Future<void> onTapCancel() async {
+    if (!mounted) return;
     if (widget.isClickable) {
       await _onDelayed();
-      animationController!.animateTo(1.0,
+      animationController.animateTo(1.0,
           duration: const Duration(milliseconds: 240),
           curve: Curves.fastOutSlowIn);
     }
@@ -62,6 +63,7 @@ class _TapEffectState extends State<TapEffect>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () async {
         if (widget.isClickable) {
           await Future<dynamic>.delayed(const Duration(milliseconds: 280));
@@ -76,7 +78,7 @@ class _TapEffectState extends State<TapEffect>
       onTapDown: (TapDownDetails details) {
         if (widget.isClickable) {
           tapTime = DateTime.now();
-          animationController!.animateTo(0.9,
+          animationController.animateTo(0.9,
               duration: const Duration(milliseconds: 120),
               curve: Curves.fastOutSlowIn);
         }
@@ -89,10 +91,10 @@ class _TapEffectState extends State<TapEffect>
         onTapCancel();
       },
       child: AnimatedBuilder(
-        animation: animationController!,
+        animation: animationController,
         builder: (BuildContext context, Widget? child) {
           return Transform.scale(
-            scale: animationController!.value,
+            scale: animationController.value,
             origin: const Offset(0.0, 0.0),
             child: widget.child,
           );
