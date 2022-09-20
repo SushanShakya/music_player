@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
+import 'package:music_player/src/modules/home/blocs/player_control_bloc.dart';
+import 'package:music_player/src/modules/home/components/waveform_widget.dart';
 
 import 'package:music_player/src/modules/songs/blocs/song_play_bloc.dart';
 import 'package:music_player/src/modules/songs/components/song_image.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
+import 'package:music_player/src/res/colors.dart';
 import 'package:music_player/src/res/styles.dart';
 
 class SongWidget extends StatelessWidget {
@@ -16,13 +19,61 @@ class SongWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<SongPlayBloc>();
+    final ctrl2 = Get.find<PlayerControlBloc>();
+    final width = MediaQuery.of(context).size.width;
     return TapEffect(
       onClick: () {
         ctrl.playSong(song);
       },
       child: Row(
         children: [
-          SongImage(song: song),
+          Obx(() {
+            final cur = ctrl2.currentSong.value;
+            final isPlaying = ctrl2.isPlaying.value;
+            bool show = (cur != null && isPlaying && (cur.id == song.id));
+            if (show) {
+              const waveHeight = 20.0;
+              final height = width * 0.25;
+              const padding = 10;
+              return SizedBox(
+                width: height,
+                height: height * 1.3,
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0, end: 1.0),
+                  duration: const Duration(milliseconds: 300),
+                  builder: (c, t, ch) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: (height * (1 - t)) +
+                              ((height - waveHeight - padding) * t),
+                          padding: EdgeInsets.only(bottom: padding * t),
+                          child: LayoutBuilder(
+                            builder: (c, box) => SongImage(
+                              song: song,
+                              size: box.maxHeight,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: waveHeight * t,
+                          child: (t == 1)
+                              ? const WaveformWidget(
+                                  maxHeight: waveHeight,
+                                  color: scaffoldColor,
+                                )
+                              : const SizedBox(),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              );
+            }
+            return SongImage(song: song, size: width * 0.25);
+          }),
           const SizedBox(width: 10),
           Expanded(
             child: _Content(

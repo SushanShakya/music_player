@@ -14,6 +14,9 @@ class MediaItemAdapter {
       artUri: Uri.parse(
         'content://media/external/audio/media/${song.id}/albumart',
       ),
+      duration: (song.duration != null)
+          ? Duration(milliseconds: int.parse(song.duration!))
+          : null,
     );
   }
 }

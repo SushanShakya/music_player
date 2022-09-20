@@ -26,9 +26,19 @@ class PlayPauseBtn extends StatelessWidget {
           shape: BoxShape.circle,
           color: scaffoldColor,
         ),
-        child: Icon(
-          isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
-          color: Colors.white,
+        child: Center(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: isPlaying
+                ? const Icon(
+                    FontAwesomeIcons.pause,
+                    color: Colors.white,
+                  )
+                : const Icon(
+                    FontAwesomeIcons.play,
+                    color: Colors.white,
+                  ),
+          ),
         ),
       ),
     );

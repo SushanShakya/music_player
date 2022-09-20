@@ -17,6 +17,7 @@ void main() async {
       androidNotificationChannelId: 'com.ryanheise.myapp.channel.audio',
       androidNotificationChannelName: 'Sdev Music',
       androidNotificationOngoing: true,
+      androidStopForegroundOnPause: true,
     ),
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
@@ -39,6 +40,7 @@ class MusicPlayer extends StatelessWidget {
       home: ClipRRect(
         borderRadius: BorderRadius.circular(appBorderRadius),
         child: DefaultHomeView(),
+        // child: Dummy(),
       ),
     );
   }

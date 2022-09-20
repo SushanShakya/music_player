@@ -1,5 +1,6 @@
 import 'package:android_content_provider/android_content_provider.dart';
 import 'package:get/get.dart';
+import 'package:music_player/main.dart';
 import 'package:music_player/src/modules/common/blocs/loading_bloc.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
 import 'package:music_player/src/modules/songs/repo/content_resolver_song_fetch_repo.dart';
@@ -24,6 +25,9 @@ class SongFetchBloc extends LoadingBloc {
     loaded(() async {
       try {
         var data = await r.fetchSongs();
+        if (data.isNotEmpty) {
+          audioHandler.setSong(data.first);
+        }
         songs(data);
       } catch (e) {
         error("Failed to get Songs");

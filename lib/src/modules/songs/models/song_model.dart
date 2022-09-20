@@ -7,6 +7,7 @@ import '../blocs/song_fetch_bloc.dart';
 class SongModel extends Equatable {
   final String id;
   final String albumId;
+  final String album;
   final String uri;
   final String title;
   final String subtitle;
@@ -29,6 +30,7 @@ class SongModel extends Equatable {
 
   const SongModel({
     required this.id,
+    required this.album,
     required this.albumId,
     required this.uri,
     required this.title,

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 class WaveformWidget extends StatefulWidget {
   final double maxHeight;
+  final Color color;
   const WaveformWidget({
     Key? key,
     required this.maxHeight,
+    this.color = Colors.white,
   }) : super(key: key);
   @override
   State<WaveformWidget> createState() => _WaveformWidgetState();
@@ -36,6 +38,7 @@ class _WaveformWidgetState extends State<WaveformWidget>
     return AnimatedBuilder(
       animation: controller,
       builder: (c, child) => Row(
+        mainAxisSize: MainAxisSize.min,
         children: List.generate(count, (i) {
           int maxExtent = (controller.value * count).floor();
           bool inRange =
@@ -49,11 +52,11 @@ class _WaveformWidgetState extends State<WaveformWidget>
                 ? inPeriferi
                     ? widget.maxHeight * 0.8
                     : widget.maxHeight
-                : 10,
+                : widget.maxHeight * 0.3,
             width: 2,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(99),
-              color: Colors.white,
+              color: widget.color,
             ),
           );
         }),

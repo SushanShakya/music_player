@@ -10,6 +10,7 @@ class FakeData {
           title: 'Om Shanti Om',
           subtitle: 'T-series',
           duration: '100',
+          album: '',
         ),
       );
 }

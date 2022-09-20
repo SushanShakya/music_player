@@ -8,10 +8,12 @@ import 'package:music_player/src/modules/common/components/squircle_widget.dart'
 import 'package:music_player/src/modules/songs/models/song_model.dart';
 
 class SongImage extends StatefulWidget {
-  final SongModel song;
+  final SongModel? song;
+  final double? size;
   const SongImage({
     Key? key,
-    required this.song,
+    this.size,
+    this.song,
   }) : super(key: key);
 
   @override
@@ -28,14 +30,18 @@ class _SongImageState extends State<SongImage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _fetchArt();
+    if (widget.song != null) {
+      _fetchArt();
+    }
   }
 
   @override
   void didUpdateWidget(covariant SongImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.song.id != oldWidget.song.id) {
-      _fetchArt();
+    if (widget.song != null && oldWidget.song != null) {
+      if (widget.song!.id != oldWidget.song!.id) {
+        _fetchArt();
+      }
     }
   }
 
@@ -50,7 +56,7 @@ class _SongImageState extends State<SongImage> {
     final cacheSize = getCacheSize();
     try {
       _bytes = await AndroidContentResolver.instance.loadThumbnail(
-        uri: widget.song.uri,
+        uri: widget.song!.uri,
         width: cacheSize,
         height: cacheSize,
         cancellationSignal: _loadSignal,
@@ -74,11 +80,11 @@ class _SongImageState extends State<SongImage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final artPath = widget.song.imageUrl;
+    final artPath = widget.song?.imageUrl;
     File? file;
     if (artPath != null) file = File(artPath);
     return SquircleWidget(
-      size: width * 0.25,
+      size: widget.size ?? width * 0.25,
       child: (_bytes != null)
           ? Image.memory(
               _bytes!,

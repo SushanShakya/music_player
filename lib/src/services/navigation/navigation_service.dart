@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/src/modules/common/views/curved_scaffold.dart';
 
 class NavigationService {
   final BuildContext context;
@@ -60,7 +61,7 @@ class SlideRoute extends PageRouteBuilder {
         begin: offset ?? const Offset(0, 1),
         end: Offset.zero,
       ).animate(animation),
-      child: child,
+      child: CurvedScaffold(child: child),
     );
   }
 }

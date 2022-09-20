@@ -13,6 +13,7 @@ class SongModelAdapter {
       title: item.displayTitle ?? item.title,
       subtitle: item.title,
       duration: item.duration?.inSeconds.toString(),
+      album: item.album ?? '',
     );
   }
 
@@ -24,6 +25,7 @@ class SongModelAdapter {
       title: item.displayName,
       subtitle: item.title,
       duration: item.duration,
+      album: item.album,
     );
   }
 
@@ -32,6 +34,7 @@ class SongModelAdapter {
     data = SongModel(
       id: id,
       uri: 'content://media/external/audio/media/$id',
+      album: item[1] as String,
       albumId: (item[2] as int).toString(),
       title: item[6] as String,
       subtitle: item[4] as String,
