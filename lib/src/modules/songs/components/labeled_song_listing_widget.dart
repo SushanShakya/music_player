@@ -62,6 +62,7 @@ class _LabeledSongListingWidgetState extends State<LabeledSongListingWidget> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
       slivers: [
         SliverList(
           delegate: SliverChildBuilderDelegate(

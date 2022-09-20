@@ -11,12 +11,12 @@ class MediaItemAdapter {
       id: song.id,
       title: song.subtitle,
       displayTitle: song.title,
+      extras: {'uri': song.uri, 'album_id': song.album_id},
+      album: song.album,
       artUri: Uri.parse(
         'content://media/external/audio/media/${song.id}/albumart',
       ),
-      duration: (song.duration != null)
-          ? Duration(milliseconds: int.parse(song.duration!))
-          : null,
+      duration: Duration(milliseconds: int.parse(song.duration)),
     );
   }
 }

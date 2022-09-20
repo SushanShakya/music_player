@@ -28,6 +28,10 @@ class PlayerControlBloc extends GetxController {
     audioHandler.mediaItem.listen((item) {
       duration(duration.value.copyWith(total: item?.duration));
     });
+
+    audioHandler.playbackState.listen((item) {
+      duration(duration.value.copyWith(buffered: item.bufferedPosition));
+    });
   }
 
   void togglePlaying() {

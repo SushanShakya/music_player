@@ -40,32 +40,37 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
   SoundHandler() {
     currentSong = StreamController.broadcast();
     duration = StreamController.broadcast();
-    _player = AudioPlayer()
-      ..playbackEventStream.listen(_broadcastState)
-      ..durationStream.listen(_handleDurationChanges);
+    _player = AudioPlayer()..playbackEventStream.listen(_broadcastState);
+    // ..durationStream.listen(_handleDurationChanges);
   }
 
-  void _handleDurationChanges(Duration? d) {
-    if (d == null) return;
-    print(d);
-    // For UI !!
-    duration.sink.add(d);
-
-    // For Background Music Handler
-    int? i = _player.currentIndex;
-    List<MediaItem> q = queue.value;
-    if (i == null || q.isEmpty) return;
-    MediaItem newSong = q[i].copyWith(duration: d);
-    q[i] = newSong;
-    queue.add(q);
-    mediaItem.add(newSong);
-  }
+  // void _handleDurationChanges(Duration? d) {
+  //   int? i = _player.currentIndex;
+  //   List<MediaItem> q = queue.value;
+  //   if (i == null || q.isEmpty) return;
+  //   MediaItem newSong = q[i].copyWith(duration: d);
+  //   q[i] = newSong;
+  //   queue.add(q);
+  //   mediaItem.add(newSong);
+  // }
 
   Future<void> setSong(SongModel song) async {
     mediaItem.add(MediaItemAdapter.fromSongModel(song).data);
     currentSong.sink.add(song);
     await _player.setAudioSource(ProgressiveAudioSource(Uri.parse(song.uri)));
   }
+
+  // @override
+  // Future<void> addQueueItems(List<MediaItem> mediaItems) async {
+  //   final q = queue.value..addAll(mediaItems);
+  //   queue.add(q);
+  // }
+
+  // @override
+  // Future<void> addQueueItem(MediaItem mediaItem) async {
+  //   final q = queue.value..add(mediaItem);
+  //   queue.add(q);
+  // }
 
   @override
   Future<void> play() => _player.play();

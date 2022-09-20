@@ -11,7 +11,7 @@ class SongModel extends Equatable {
   final String uri;
   final String title;
   final String subtitle;
-  final String? duration;
+  final String duration;
 
   int get album_id {
     int? data = int.tryParse(albumId);
@@ -20,8 +20,7 @@ class SongModel extends Equatable {
   }
 
   String get fomattedDuration {
-    if (duration == null) return '-';
-    return duration!.durationFormat;
+    return duration.durationFormat;
   }
 
   String? get imageUrl {

@@ -12,7 +12,7 @@ class SongModelAdapter {
       uri: item.artUri.toString(),
       title: item.displayTitle ?? item.title,
       subtitle: item.title,
-      duration: item.duration?.inSeconds.toString(),
+      duration: item.duration?.inMilliseconds.toString() ?? '0',
       album: item.album ?? '',
     );
   }

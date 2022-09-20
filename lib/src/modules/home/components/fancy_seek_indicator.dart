@@ -36,12 +36,10 @@ class _FancySeekIndicatorState extends State<FancySeekIndicator> {
   static Color inactiveColor = const Color(0xffB3B3B3);
 
   late List<SeekItemSize> _items;
-  late int includedIndex;
 
   @override
   void initState() {
     super.initState();
-    includedIndex = (widget.percentage * widget.count).floor();
     _items = List.generate(widget.count, (i) {
       if (i == 0) return SeekItemSize.small;
       if (i == (widget.count - 1)) return SeekItemSize.small;
@@ -54,20 +52,53 @@ class _FancySeekIndicatorState extends State<FancySeekIndicator> {
   @override
   Widget build(BuildContext context) {
     const height = 30;
+    int includedIndex = (widget.percentage * widget.count).floor();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(
         _items.length,
         (i) {
           var cur = _items[i];
-          bool active = i <= includedIndex;
-          return Container(
-            height: cur.sizePercent * height,
-            width: 5,
-            decoration: BoxDecoration(
-              color: active ? activeColor : inactiveColor,
-              borderRadius: BorderRadius.circular(100),
-            ),
+          bool active = i < includedIndex;
+          double totalPercent = 1 / _items.length;
+          double startPercent = (i * totalPercent);
+          double endPercent = startPercent + totalPercent;
+          bool percentInRange = widget.percentage >= startPercent &&
+              widget.percentage <= endPercent;
+          double percent = widget.percentage - startPercent;
+          double widthPercent = percent / totalPercent;
+          return Stack(
+            children: [
+              Container(
+                height: cur.sizePercent * height,
+                width: 5,
+                decoration: BoxDecoration(
+                  color: active ? activeColor : inactiveColor,
+                  // color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              if ((!active) && percentInRange)
+                SizedBox(
+                  width: 5,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    clipBehavior: Clip.hardEdge,
+                    child: Row(
+                      children: [
+                        Container(
+                          height: cur.sizePercent * height,
+                          width: 5 * widthPercent,
+                          decoration: const BoxDecoration(
+                            color: Colors.black,
+                            // color: activeColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           );
         },
       ),

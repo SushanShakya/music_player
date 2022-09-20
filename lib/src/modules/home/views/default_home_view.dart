@@ -6,6 +6,7 @@ import 'package:music_player/src/modules/home/blocs/player_control_bloc.dart';
 import 'package:music_player/src/modules/home/components/back_and_forth_animation_wrapper.dart';
 import 'package:music_player/src/modules/home/components/fancy_seek_indicator.dart';
 import 'package:music_player/src/modules/home/components/player_control_bar.dart';
+import 'package:music_player/src/modules/home/models/progress_bar_model.dart';
 import 'package:music_player/src/modules/songs/blocs/song_play_bloc.dart';
 import 'package:music_player/src/modules/songs/components/song_image.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
@@ -97,7 +98,15 @@ class _DefaultHomeViewState extends State<DefaultHomeView> {
                         ),
                       ),
                       const SizedBox(height: 40),
-                      const FancySeekIndicator(percentage: 0.5),
+                      Obx(() {
+                        ProgressBarState dat = playerControlBloc.duration.value;
+                        double percentage = 0.0;
+                        if (dat.total != Duration.zero) {
+                          percentage =
+                              (dat.current.inSeconds / dat.total.inSeconds);
+                        }
+                        return FancySeekIndicator(percentage: percentage);
+                      }),
                       const SizedBox(height: 30),
                       PlayerControlBar(),
                       Row(
