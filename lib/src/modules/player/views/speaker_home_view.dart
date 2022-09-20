@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_player/constants/assets.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
-import 'package:music_player/src/modules/home/blocs/home_bloc.dart';
-import 'package:music_player/src/modules/home/components/player_buttons_widget.dart';
-import 'package:music_player/src/modules/home/components/volume_btn.dart';
+import 'package:music_player/src/modules/player/components/player_buttons_widget.dart';
+import 'package:music_player/src/modules/player/components/volume_btn.dart';
 import 'package:music_player/src/res/colors.dart';
+
+import '../blocs/home_bloc.dart';
 
 class SpeakerHomeView extends StatefulWidget {
   @override

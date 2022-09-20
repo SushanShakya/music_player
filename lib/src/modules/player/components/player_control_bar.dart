@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:music_player/src/modules/home/blocs/player_control_bloc.dart';
-import 'package:music_player/src/modules/home/components/padded_icon_button.dart';
-import 'package:music_player/src/modules/home/components/play_pause_btn.dart';
+import 'package:music_player/src/modules/common/components/animated_notification.dart';
+import 'package:music_player/src/modules/player/blocs/player_control_bloc.dart';
+import 'package:music_player/src/modules/player/components/padded_icon_button.dart';
+import 'package:music_player/src/modules/player/components/play_pause_btn.dart';
+import 'package:music_player/src/modules/player/enums/repeat_mode.dart';
 
 class PlayerControlBar extends StatelessWidget {
   @override
@@ -11,15 +13,26 @@ class PlayerControlBar extends StatelessWidget {
     final ctrl = Get.find<PlayerControlBloc>();
     return Row(
       children: [
-        PaddedIconButton(
-          icon: FontAwesomeIcons.repeat,
-          size: 16,
-          onTap: () {},
+        Obx(
+          () {
+            final mode = ctrl.repeatModel.mode.value;
+            return PaddedIconButton(
+              icon: mode.icon,
+              size: 16,
+              onTap: () {
+                showRepeatNotification(
+                  context: context,
+                  mode: ctrl.repeatModel.getNext(),
+                );
+                ctrl.repeat();
+              },
+            );
+          },
         ),
         const Spacer(),
         PaddedIconButton(
           icon: FontAwesomeIcons.backward,
-          onTap: () {},
+          onTap: ctrl.prev,
         ),
         const SizedBox(width: 15),
         Obx(
@@ -31,7 +44,7 @@ class PlayerControlBar extends StatelessWidget {
         const SizedBox(width: 15),
         PaddedIconButton(
           icon: FontAwesomeIcons.forward,
-          onTap: () {},
+          onTap: ctrl.next,
         ),
         const Spacer(),
         PaddedIconButton(

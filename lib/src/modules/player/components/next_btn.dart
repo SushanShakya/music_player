@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
-import 'package:music_player/src/modules/home/components/rounded_triangle.dart';
+import 'package:music_player/src/modules/player/components/rounded_triangle.dart';
 import 'package:music_player/src/res/colors.dart';
 
 class NextBtn extends StatelessWidget {

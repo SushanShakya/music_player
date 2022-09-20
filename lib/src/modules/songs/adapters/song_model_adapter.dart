@@ -8,8 +8,8 @@ class SongModelAdapter {
   SongModelAdapter.fromMediaItem(MediaItem item) {
     data = SongModel(
       id: item.id,
-      albumId: item.album ?? '',
-      uri: item.artUri.toString(),
+      albumId: item.extras!['album_id'] ?? '',
+      uri: item.extras!['uri'] ?? '',
       title: item.displayTitle ?? item.title,
       subtitle: item.title,
       duration: item.duration?.inMilliseconds.toString() ?? '0',

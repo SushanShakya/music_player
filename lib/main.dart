@@ -2,12 +2,11 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:music_player/src/modules/home/blocs/player_control_bloc.dart';
+import 'package:music_player/src/modules/player/blocs/player_control_bloc.dart';
+import 'package:music_player/src/modules/player/views/default_home_view.dart';
 import 'package:music_player/src/modules/songs/components/floating_song_indicator.dart';
 import 'package:music_player/src/res/dimens.dart';
 import 'package:music_player/src/services/sound/sound_handler.dart';
-
-import 'src/modules/home/views/default_home_view.dart';
 
 late SoundHandler audioHandler;
 

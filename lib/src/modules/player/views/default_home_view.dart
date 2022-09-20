@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:music_player/src/extensions/str_extension.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
-import 'package:music_player/src/modules/home/blocs/player_control_bloc.dart';
-import 'package:music_player/src/modules/home/components/back_and_forth_animation_wrapper.dart';
-import 'package:music_player/src/modules/home/components/fancy_seek_indicator.dart';
-import 'package:music_player/src/modules/home/components/player_control_bar.dart';
-import 'package:music_player/src/modules/home/models/progress_bar_model.dart';
+import 'package:music_player/src/modules/player/blocs/player_control_bloc.dart';
+import 'package:music_player/src/modules/player/components/back_and_forth_animation_wrapper.dart';
+import 'package:music_player/src/modules/player/components/fancy_seek_indicator.dart';
+import 'package:music_player/src/modules/player/components/player_control_bar.dart';
+import 'package:music_player/src/modules/player/models/progress_bar_model.dart';
 import 'package:music_player/src/modules/songs/blocs/song_play_bloc.dart';
 import 'package:music_player/src/modules/songs/components/song_image.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
@@ -16,6 +16,7 @@ import 'package:music_player/src/res/styles.dart';
 import 'package:music_player/src/services/navigation/navigation_service.dart';
 
 import '../../songs/blocs/song_fetch_bloc.dart';
+import '../components/title_subtitle_widget.dart';
 
 class DefaultHomeView extends StatefulWidget {
   @override
@@ -81,17 +82,9 @@ class _DefaultHomeViewState extends State<DefaultHomeView> {
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  song?.title ?? "No Song Selected",
-                                  maxLines: 1,
-                                  textAlign: TextAlign.center,
-                                  style: titleStyle,
-                                ),
-                                Text(
-                                  song?.album ?? "-",
-                                  style: subtitleStyle,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
+                                TitleSubtitleWidget(
+                                  title: song?.title,
+                                  subtitle: song?.album,
                                 ),
                               ],
                             );

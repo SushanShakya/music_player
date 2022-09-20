@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../home/blocs/player_control_bloc.dart';
+import '../../player/blocs/player_control_bloc.dart';
 import '../../songs/components/floating_song_indicator.dart';
 
 class BodyWithIndicator extends StatelessWidget {

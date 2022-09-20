@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_player/src/modules/player/adapters/just_audio_repeat_adapter.dart';
 import 'package:music_player/src/modules/songs/adapters/audio_source_adapter.dart';
 import 'package:music_player/src/modules/songs/adapters/media_item_adapter.dart';
+import 'package:music_player/src/modules/songs/adapters/song_model_adapter.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
 
 class SoundHandler extends BaseAudioHandler with SeekHandler {
@@ -23,9 +25,7 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
         MediaControl.skipToNext,
         MediaControl.stop,
       ],
-      systemActions: const {
-        MediaAction.seek,
-      },
+      systemActions: MediaAction.values.toSet(),
       androidCompactActionIndices: const [0, 1, 2],
       processingState: const {
         ProcessingState.idle: AudioProcessingState.idle,
@@ -53,8 +53,21 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
     playlist = [];
     currentSong = StreamController.broadcast();
     duration = StreamController.broadcast();
-    _player = AudioPlayer()..playbackEventStream.listen(_broadcastState);
-    // ..durationStream.listen(_handleDurationChanges);
+    _player = AudioPlayer()
+      ..playbackEventStream.listen(_broadcastState)
+      ..processingStateStream.listen((e) {
+        if (e == ProcessingState.completed) skipToNext();
+      })
+      ..currentIndexStream.listen((i) {
+        if (i == null) return;
+        final playlist = queue.value;
+        if (playlist.isEmpty) return;
+        mediaItem.add(playlist[i]);
+      });
+    mediaItem.listen((item) {
+      if (item == null) return;
+      currentSong.sink.add(SongModelAdapter.fromMediaItem(item).data);
+    });
     _loadEmptyPlaylist();
   }
 
@@ -68,10 +81,14 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
   //   mediaItem.add(newSong);
   // }
 
+  Future<void> playSong(SongModel song) async {}
+
   Future<void> setSong(SongModel song) async {
-    // mediaItem.add(MediaItemAdapter.fromSongModel(song).data);
-    currentSong.sink.add(song);
-    await _player.setAudioSource(ProgressiveAudioSource(Uri.parse(song.uri)));
+    List<MediaItem> songs = queue.value;
+    int i = songs.indexWhere((e) => e.id == song.id);
+    mediaItem.add(songs[i]);
+    // _player.setAudioSource(ProgressiveAudioSource(Uri.parse(song.uri)));
+    _player.setAudioSource(_playlist, initialIndex: i);
   }
 
   Future<void> setPlaylist(List<SongModel> songs) async {
@@ -109,4 +126,20 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> seek(Duration position) => _player.seek(position);
+
+  @override
+  Future<void> skipToNext() {
+    super.skipToNext();
+    return _player.seekToNext();
+  }
+
+  @override
+  Future<void> skipToPrevious() {
+    super.skipToPrevious();
+    return _player.seekToPrevious();
+  }
+
+  @override
+  Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) => _player
+      .setLoopMode(JustAudioRepeatAdapter.fromAudioService(repeatMode).data);
 }

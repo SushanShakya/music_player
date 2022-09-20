@@ -11,11 +11,9 @@ class MediaItemAdapter {
       id: song.id,
       title: song.subtitle,
       displayTitle: song.title,
-      extras: {'uri': song.uri, 'album_id': song.album_id},
+      extras: {'uri': song.uri, 'album_id': song.album},
       album: song.album,
-      artUri: Uri.parse(
-        'content://media/external/audio/media/${song.id}/albumart',
-      ),
+      artUri: Uri.parse(song.artUri),
       duration: Duration(milliseconds: int.parse(song.duration)),
     );
   }

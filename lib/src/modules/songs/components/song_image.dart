@@ -64,6 +64,18 @@ class _SongImageState extends State<SongImage> {
     } catch (e) {
       _bytes = null;
     }
+    if (_bytes == null) {
+      try {
+        _bytes = await AndroidContentResolver.instance.loadThumbnail(
+          uri: widget.song!.artUri,
+          width: cacheSize,
+          height: cacheSize,
+          cancellationSignal: _loadSignal,
+        );
+      } catch (e) {
+        _bytes = null;
+      }
+    }
     if (mounted) {
       setState(() {
         loaded = true;

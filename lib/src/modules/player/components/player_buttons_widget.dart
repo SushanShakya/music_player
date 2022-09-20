@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:music_player/src/modules/home/components/next_btn.dart';
-import 'package:music_player/src/modules/home/components/power_btn.dart';
+import 'package:music_player/src/modules/player/components/next_btn.dart';
+import 'package:music_player/src/modules/player/components/power_btn.dart';
 
 import '../blocs/home_bloc.dart';
 

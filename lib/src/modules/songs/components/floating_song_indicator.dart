@@ -4,16 +4,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:music_player/constants/assets.dart';
 import 'package:music_player/src/extensions/str_extension.dart';
-import 'package:music_player/src/modules/home/components/padded_icon_button.dart';
-import 'package:music_player/src/modules/home/components/waveform_widget.dart';
+import 'package:music_player/src/modules/player/components/padded_icon_button.dart';
+import 'package:music_player/src/modules/player/components/waveform_widget.dart';
 import 'package:music_player/src/modules/songs/components/song_image.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
 import 'package:music_player/src/res/colors.dart';
 import 'package:music_player/src/res/dimens.dart';
 import 'package:music_player/src/res/styles.dart';
 
-import '../../home/blocs/player_control_bloc.dart';
-import '../../home/models/progress_bar_model.dart';
+import '../../player/blocs/player_control_bloc.dart';
+import '../../player/models/progress_bar_model.dart';
 
 class FloatingSongIndicator extends StatefulWidget {
   static const minHeight = 48.0;
@@ -238,7 +238,7 @@ class _ExpandedBody extends StatelessWidget {
                     icon: FontAwesomeIcons.backward,
                     color: Colors.white,
                     size: 30,
-                    onTap: () {},
+                    onTap: ctrl.prev,
                   ),
                   const SizedBox(width: 10),
                   PaddedIconButton(
@@ -254,7 +254,7 @@ class _ExpandedBody extends StatelessWidget {
                     icon: FontAwesomeIcons.forward,
                     color: Colors.white,
                     size: 30,
-                    onTap: () {},
+                    onTap: ctrl.next,
                   ),
                 ],
               ),

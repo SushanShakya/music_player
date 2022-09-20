@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
-import 'package:music_player/src/modules/home/blocs/player_control_bloc.dart';
-import 'package:music_player/src/modules/home/components/waveform_widget.dart';
+import 'package:music_player/src/modules/player/blocs/player_control_bloc.dart';
+import 'package:music_player/src/modules/player/components/waveform_widget.dart';
 
 import 'package:music_player/src/modules/songs/blocs/song_play_bloc.dart';
 import 'package:music_player/src/modules/songs/components/song_image.dart';

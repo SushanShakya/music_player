@@ -13,6 +13,8 @@ class SongModel extends Equatable {
   final String subtitle;
   final String duration;
 
+  String get artUri => 'content://media/external/audio/media/$id/albumart';
+
   int get album_id {
     int? data = int.tryParse(albumId);
     data ??= -1;
