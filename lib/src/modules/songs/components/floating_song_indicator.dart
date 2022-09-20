@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:music_player/constants/assets.dart';
+import 'package:music_player/src/extensions/str_extension.dart';
 import 'package:music_player/src/modules/home/components/padded_icon_button.dart';
 import 'package:music_player/src/modules/home/components/waveform_widget.dart';
 import 'package:music_player/src/modules/songs/components/song_image.dart';
@@ -11,6 +13,7 @@ import 'package:music_player/src/res/dimens.dart';
 import 'package:music_player/src/res/styles.dart';
 
 import '../../home/blocs/player_control_bloc.dart';
+import '../../home/models/progress_bar_model.dart';
 
 class FloatingSongIndicator extends StatefulWidget {
   static const minHeight = 48.0;
@@ -76,14 +79,14 @@ class _FloatingSongIndicatorState extends State<FloatingSongIndicator>
               onVerticalDragUpdate: (dat) {
                 print('------------Drag Update');
                 print(dat.localPosition.direction);
-                if (dat.localPosition.dy > FloatingSongIndicator.minHeight) {
-                  controller.fling();
-                }
+                // if (dat.localPosition.dy > FloatingSongIndicator.minHeight) {
+                //   controller.fling();
+                // }
               },
               onVerticalDragEnd: (dat) {
                 if (dat.primaryVelocity != null) {
                   if (dat.primaryVelocity! > 0.0) {
-                    controller.forward();
+                    // controller.forward();
                   }
                 }
               },
@@ -163,6 +166,11 @@ class _ExpandedBody extends StatelessWidget {
       child: Obx(
         () {
           SongModel? song = ctrl.currentSong.value;
+          ProgressBarState dat = ctrl.duration.value;
+          double percentage = 0.0;
+          if (dat.total != Duration.zero) {
+            percentage = (dat.current.inSeconds / dat.total.inSeconds);
+          }
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -198,6 +206,31 @@ class _ExpandedBody extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: CupertinoSlider(
+                      value: percentage,
+                      onChanged: (v) {},
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    dat.current.inMilliseconds
+                        .toString()
+                        .durationIndicatorFormat,
+                    style: subtitleStyle.copyWith(color: Colors.white),
+                  ),
+                  const Spacer(),
+                  Text(
+                    dat.total.inMilliseconds.toString().durationIndicatorFormat,
+                    style: subtitleStyle.copyWith(color: Colors.white),
+                  ),
+                ],
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

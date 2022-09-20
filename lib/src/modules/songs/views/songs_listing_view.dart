@@ -1,8 +1,11 @@
+import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_player/constants/assets.dart';
+import 'package:music_player/src/modules/common/components/tap_effect.dart';
 import 'package:music_player/src/modules/common/views/body_with_indicator.dart';
 import 'package:music_player/src/modules/songs/blocs/song_fetch_bloc.dart';
+import 'package:music_player/src/res/colors.dart';
 import 'package:music_player/src/res/styles.dart';
 
 import '../components/labeled_song_listing_widget.dart';
@@ -13,6 +16,27 @@ class SongsListingView extends StatelessWidget {
     var ctrl = Get.find<SongFetchBloc>();
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      floatingActionButton: TapEffect(
+        onClick: () {},
+        child: Container(
+          height: 48,
+          width: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: scaffoldColor,
+            boxShadow: [
+              BoxShadow(
+                color: scaffoldColor.withOpacity(0.6),
+                blurRadius: 2,
+                offset: const Offset(2, 2),
+              ),
+            ],
+          ),
+          child: const Center(
+            child: Icon(FeatherIcons.search, color: Colors.white),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: BodyWithIndicator(
           child: GestureDetector(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:music_player/src/extensions/str_extension.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
 import 'package:music_player/src/modules/home/blocs/player_control_bloc.dart';
 import 'package:music_player/src/modules/home/components/back_and_forth_animation_wrapper.dart';
@@ -105,7 +106,29 @@ class _DefaultHomeViewState extends State<DefaultHomeView> {
                           percentage =
                               (dat.current.inSeconds / dat.total.inSeconds);
                         }
-                        return FancySeekIndicator(percentage: percentage);
+                        return Column(
+                          children: [
+                            FancySeekIndicator(percentage: percentage),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Text(
+                                  dat.current.inMilliseconds
+                                      .toString()
+                                      .durationIndicatorFormat,
+                                  style: subtitleStyle,
+                                ),
+                                const Spacer(),
+                                Text(
+                                  dat.total.inMilliseconds
+                                      .toString()
+                                      .durationIndicatorFormat,
+                                  style: subtitleStyle,
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
                       }),
                       const SizedBox(height: 30),
                       PlayerControlBar(),

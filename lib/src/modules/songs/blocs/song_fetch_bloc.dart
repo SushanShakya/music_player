@@ -26,7 +26,7 @@ class SongFetchBloc extends LoadingBloc {
       try {
         var data = await r.fetchSongs();
         if (data.isNotEmpty) {
-          audioHandler.setSong(data.first);
+          audioHandler.setPlaylist(data);
         }
         songs(data);
       } catch (e) {

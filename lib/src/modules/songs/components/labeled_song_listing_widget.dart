@@ -69,35 +69,40 @@ class _LabeledSongListingWidgetState extends State<LabeledSongListingWidget> {
             (c, i) {
               var labeledSong = labeledSongs[i];
               // return SmallSongListingWidget(songs: labeledSong.songs);
-              return StickyHeader(
-                header: Container(
-                  height: 48,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: bgColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 5,
-                      ),
-                    ],
+              return Padding(
+                padding: (i == (labeledSongs.length - 1))
+                    ? const EdgeInsets.only(bottom: 60.0)
+                    : EdgeInsets.zero,
+                child: StickyHeader(
+                  header: Container(
+                    height: 48,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 5,
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          labeledSong.title,
+                          style: titleStyle,
+                        ),
+                      ],
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        labeledSong.title,
-                        style: titleStyle,
-                      ),
-                    ],
+                  content: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    child: SmallSongListingWidget(songs: labeledSong.songs),
                   ),
-                ),
-                content: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: SmallSongListingWidget(songs: labeledSong.songs),
                 ),
               );
             },
