@@ -18,12 +18,12 @@ import 'package:music_player/src/services/navigation/navigation_service.dart';
 import '../../songs/blocs/song_fetch_bloc.dart';
 import '../components/title_subtitle_widget.dart';
 
-class DefaultHomeView extends StatefulWidget {
+class PlayerView extends StatefulWidget {
   @override
-  State<DefaultHomeView> createState() => _DefaultHomeViewState();
+  State<PlayerView> createState() => _PlayerViewState();
 }
 
-class _DefaultHomeViewState extends State<DefaultHomeView> {
+class _PlayerViewState extends State<PlayerView> {
   late SongPlayBloc songPlayBloc;
   late PlayerControlBloc playerControlBloc;
 

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:music_player/constants/assets.dart';
 import 'package:music_player/src/extensions/str_extension.dart';
 import 'package:music_player/src/modules/player/components/padded_icon_button.dart';
 import 'package:music_player/src/modules/player/components/waveform_widget.dart';
@@ -69,27 +68,6 @@ class _FloatingSongIndicatorState extends State<FloatingSongIndicator>
             final containerWidth = (a * (1 - t)) + (b * t);
             return GestureDetector(
               onTap: toggle,
-              onVerticalDragStart: (dat) {
-                print('---- Drag Start');
-                print('-- GLOBAL Position ');
-                print(dat.globalPosition);
-                print('-- LOCAL Position ');
-                print(dat.localPosition);
-              },
-              onVerticalDragUpdate: (dat) {
-                print('------------Drag Update');
-                print(dat.localPosition.direction);
-                // if (dat.localPosition.dy > FloatingSongIndicator.minHeight) {
-                //   controller.fling();
-                // }
-              },
-              onVerticalDragEnd: (dat) {
-                if (dat.primaryVelocity != null) {
-                  if (dat.primaryVelocity! > 0.0) {
-                    // controller.forward();
-                  }
-                }
-              },
               child: Container(
                 decoration: BoxDecoration(
                   color: scaffoldColor,
@@ -126,22 +104,18 @@ class _ContractedBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const spacing = 8.0;
+    final ctrl = Get.find<PlayerControlBloc>();
     return Padding(
       padding: const EdgeInsets.all(spacing),
       child: Row(
         children: [
+          const SizedBox(width: 5),
           Hero(
             tag: FloatingSongIndicator.tag,
-            child: Container(
-              height: FloatingSongIndicator.minHeight - spacing,
-              width: FloatingSongIndicator.minHeight - spacing,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage(Assets.no_image),
-                  fit: BoxFit.contain,
-                ),
+            child: Obx(
+              () => SongImage(
+                size: FloatingSongIndicator.minHeight - (spacing * 2),
+                song: ctrl.currentSong.value,
               ),
             ),
           ),
@@ -211,7 +185,7 @@ class _ExpandedBody extends StatelessWidget {
                   Expanded(
                     child: CupertinoSlider(
                       value: percentage,
-                      onChanged: (v) {},
+                      onChanged: ctrl.seek,
                     ),
                   )
                 ],

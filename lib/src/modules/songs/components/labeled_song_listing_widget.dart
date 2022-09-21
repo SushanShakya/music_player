@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
+import 'package:music_player/src/modules/songs/models/header_key.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 import 'package:music_player/src/modules/songs/blocs/small_song_listing_widget.dart';
@@ -8,6 +9,7 @@ import 'package:music_player/src/res/colors.dart';
 import 'package:music_player/src/res/styles.dart';
 
 import '../models/labelled_songs.dart';
+import 'dialog/alphabetic_dialog.dart';
 
 class LabeledSongListingWidget extends StatefulWidget {
   final List<SongModel> songs;
@@ -25,7 +27,7 @@ class _LabeledSongListingWidgetState extends State<LabeledSongListingWidget> {
   static List<String> titles = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').toList();
 
   late List<LabelledSongs> labeledSongs;
-  late List<Key> keys;
+  late List<HeaderKey> keys;
 
   List<LabelledSongs> _labelSongs(List<SongModel> songs) {
     var data = <LabelledSongs>[];
@@ -58,7 +60,8 @@ class _LabeledSongListingWidgetState extends State<LabeledSongListingWidget> {
 
   void init() {
     labeledSongs = _labelSongs(widget.songs);
-    keys = labeledSongs.map((e) => Key(e.title)).toList();
+    keys = List.generate(labeledSongs.length,
+        (i) => HeaderKey(key: GlobalKey(), tag: labeledSongs[i].title));
   }
 
   @override
@@ -72,33 +75,48 @@ class _LabeledSongListingWidgetState extends State<LabeledSongListingWidget> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
       slivers: [
         SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (c, i) {
-              var labeledSong = labeledSongs[i];
-              // return SmallSongListingWidget(songs: labeledSong.songs);
-              return Padding(
-                padding: (i == (labeledSongs.length - 1))
-                    ? const EdgeInsets.only(bottom: 60.0)
-                    : EdgeInsets.zero,
-                child: StickyHeader(
-                  header: _HeaderWidget(
-                    key: keys[i],
-                    title: labeledSong.title,
-                    onTap: () {},
-                  ),
-                  content: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    child: SmallSongListingWidget(songs: labeledSong.songs),
+          delegate: SliverChildBuilderDelegate((c, i) {
+            var labeledSong = labeledSongs[i];
+            // return SmallSongListingWidget(songs: labeledSong.songs);
+            return Padding(
+              // key: keys[i].key,
+              padding: (i == (labeledSongs.length - 1))
+                  ? const EdgeInsets.only(bottom: 60.0)
+                  : EdgeInsets.zero,
+              child: StickyHeader(
+                header: _HeaderWidget(
+                  title: labeledSong.title,
+                  onTap: () async {
+                    String? letter = await showAlphabeticDialog(context);
+                    if (letter == null) return;
+                    // try {
+                    //   HeaderKey key = keys.firstWhere((e) => e.tag == letter);
+                    //   Scrollable.ensureVisible(
+                    //     key.key.currentContext!,
+                    //     duration: const Duration(milliseconds: 200),
+                    //   );
+                    // } catch (e) {
+                    //   print(e);
+                    //   showIconedNotification(
+                    //     context: context,
+                    //     icon: FeatherIcons.alertOctagon,
+                    //     text: 'No Song Found',
+                    //   );
+                    // }
+                  },
+                ),
+                content: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: SmallSongListingWidget(
+                    songs: labeledSong.songs,
                   ),
                 ),
-              );
-            },
-            childCount: labeledSongs.length,
-          ),
+              ),
+            );
+          }, childCount: labeledSongs.length),
         ),
       ],
     );

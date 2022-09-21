@@ -89,6 +89,14 @@ class PlayerControlBloc extends GetxController {
   void next() => audioHandler.skipToNext();
   void prev() => audioHandler.skipToPrevious();
 
+  void seek(double percent) {
+    ProgressBarState state = duration.value;
+    Duration d = Duration(
+      milliseconds: (state.total.inMilliseconds * percent).toInt(),
+    );
+    audioHandler.seek(d);
+  }
+
   void repeat() {
     repeatModel.update();
     final mode = repeatModel.mode.value;

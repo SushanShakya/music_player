@@ -49,7 +49,7 @@ class SlideRoute extends PageRouteBuilder {
   SlideRoute({required this.child, bool fullscreenDialog = false, this.offset})
       : super(
             fullscreenDialog: fullscreenDialog,
-            transitionDuration: const Duration(milliseconds: 500),
+            transitionDuration: const Duration(milliseconds: 200),
             pageBuilder: (a, b, c) => child);
 
   @override

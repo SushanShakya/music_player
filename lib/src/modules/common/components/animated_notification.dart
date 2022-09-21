@@ -45,6 +45,7 @@ class _AnimatedNotificationState extends State<AnimatedNotification>
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Material(
+      color: Colors.transparent,
       child: AnimatedBuilder(
         animation: controller,
         builder: (c, ch) {

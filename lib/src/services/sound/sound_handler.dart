@@ -83,7 +83,7 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
         if (_player.shuffleModeEnabled) {
           i = _player.shuffleIndices![i];
         }
-        mediaItem.add(playlist[i]);
+        addToMediaItem(playlist[i]);
       })
       ..sequenceStateStream.listen((SequenceState? state) {
         final seq = state?.effectiveSequence;
@@ -98,23 +98,17 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
     _loadEmptyPlaylist();
   }
 
-  // void _handleDurationChanges(Duration? d) {
-  //   int? i = _player.currentIndex;
-  //   List<MediaItem> q = queue.value;
-  //   if (i == null || q.isEmpty) return;
-  //   MediaItem newSong = q[i].copyWith(duration: d);
-  //   q[i] = newSong;
-  //   queue.add(q);
-  //   mediaItem.add(newSong);
-  // }
+  Future<void> addToMediaItem(MediaItem song) async {
+    MediaItem cur = await MediaItemAdapter.createFromMediaItem(song);
+    mediaItem.add(cur);
+  }
 
   Future<void> playSong(SongModel song) async {}
 
   Future<void> setSong(SongModel song) async {
     List<MediaItem> songs = queue.value;
     int i = songs.indexWhere((e) => e.id == song.id);
-    mediaItem.add(songs[i]);
-    // _player.setAudioSource(ProgressiveAudioSource(Uri.parse(song.uri)));
+    await addToMediaItem(songs[i]);
     _player.setAudioSource(_playlist, initialIndex: i);
   }
 

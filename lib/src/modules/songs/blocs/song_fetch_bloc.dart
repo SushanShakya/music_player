@@ -27,6 +27,16 @@ class SongFetchBloc extends LoadingBloc {
         var data = await r.fetchSongs();
         if (data.isNotEmpty) {
           audioHandler.setPlaylist(data);
+          try {
+            var x = data
+                .where((e) => e.title.toLowerCase().startsWith('maroon'))
+                .toList();
+            for (int i = 0; i < x.length; i++) {
+              print(x[i]);
+            }
+          } catch (e) {
+            print(e);
+          }
         }
         songs(data);
       } catch (e) {

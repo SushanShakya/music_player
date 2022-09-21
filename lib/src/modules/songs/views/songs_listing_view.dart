@@ -2,40 +2,68 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_player/constants/assets.dart';
-import 'package:music_player/src/modules/common/components/tap_effect.dart';
 import 'package:music_player/src/modules/common/views/body_with_indicator.dart';
 import 'package:music_player/src/modules/songs/blocs/song_fetch_bloc.dart';
-import 'package:music_player/src/res/colors.dart';
+import 'package:music_player/src/modules/songs/components/round_btn.dart';
 import 'package:music_player/src/res/styles.dart';
 
 import '../components/labeled_song_listing_widget.dart';
 
-class SongsListingView extends StatelessWidget {
+class SongsListingView extends StatefulWidget {
+  @override
+  State<SongsListingView> createState() => _SongsListingViewState();
+}
+
+class _SongsListingViewState extends State<SongsListingView> {
+  late ScrollController controller;
+
+  late Rx<bool> backToTop;
+
+  @override
+  void initState() {
+    super.initState();
+    backToTop = false.obs;
+    controller = ScrollController()
+      ..addListener(() {
+        bool shouldGoBack = controller.offset > 100;
+        if (shouldGoBack != backToTop.value) {
+          backToTop(shouldGoBack);
+        }
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     var ctrl = Get.find<SongFetchBloc>();
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      floatingActionButton: TapEffect(
-        onClick: () {},
-        child: Container(
-          height: 48,
-          width: 48,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: scaffoldColor,
-            boxShadow: [
-              BoxShadow(
-                color: scaffoldColor.withOpacity(0.6),
-                blurRadius: 2,
-                offset: const Offset(2, 2),
-              ),
-            ],
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Obx(
+            () => backToTop.value
+                ? TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: 0, end: 1),
+                    duration: const Duration(milliseconds: 200),
+                    builder: (c, t, ch) => Opacity(
+                      opacity: t,
+                      child: RoundIconBtn(
+                        icon: FeatherIcons.arrowUp,
+                        onTap: () {
+                          controller.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.bounceInOut,
+                          );
+                        },
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
           ),
-          child: const Center(
-            child: Icon(FeatherIcons.search, color: Colors.white),
-          ),
-        ),
+          const SizedBox(height: 10),
+          RoundIconBtn(icon: FeatherIcons.search, onTap: () {}),
+        ],
       ),
       body: SafeArea(
         child: BodyWithIndicator(
@@ -48,6 +76,7 @@ class SongsListingView extends StatelessWidget {
               }
             },
             child: NestedScrollView(
+              controller: controller,
               headerSliverBuilder: (c, box) => [
                 SliverOverlapAbsorber(
                   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(c),
