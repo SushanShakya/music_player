@@ -6,6 +6,7 @@ import 'package:music_player/src/modules/player/blocs/player_control_bloc.dart';
 import 'package:music_player/src/modules/player/components/padded_icon_button.dart';
 import 'package:music_player/src/modules/player/components/play_pause_btn.dart';
 import 'package:music_player/src/modules/player/enums/repeat_mode.dart';
+import 'package:music_player/src/res/colors.dart';
 
 class PlayerControlBar extends StatelessWidget {
   @override
@@ -30,9 +31,12 @@ class PlayerControlBar extends StatelessWidget {
           },
         ),
         const Spacer(),
-        PaddedIconButton(
-          icon: FontAwesomeIcons.backward,
-          onTap: ctrl.prev,
+        Obx(
+          () => PaddedIconButton(
+            icon: FontAwesomeIcons.backward,
+            color: ctrl.isFirst.value ? inactiveColor : null,
+            onTap: ctrl.prev,
+          ),
         ),
         const SizedBox(width: 15),
         Obx(
@@ -42,16 +46,29 @@ class PlayerControlBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 15),
-        PaddedIconButton(
-          icon: FontAwesomeIcons.forward,
-          onTap: ctrl.next,
-        ),
+        Obx(() {
+          return PaddedIconButton(
+            icon: FontAwesomeIcons.forward,
+            color: ctrl.isLast.value ? inactiveColor : null,
+            onTap: ctrl.next,
+          );
+        }),
         const Spacer(),
-        PaddedIconButton(
-          icon: FontAwesomeIcons.shuffle,
-          size: 16,
-          onTap: () {},
-        ),
+        Obx(() {
+          return PaddedIconButton(
+            icon: ctrl.shuffleMode.value
+                ? FontAwesomeIcons.shuffle
+                : FontAwesomeIcons.arrowDown19,
+            size: 16,
+            onTap: () {
+              showShuffleNotification(
+                context: context,
+                shuffle: !ctrl.shuffleMode.value,
+              );
+              ctrl.shuffle();
+            },
+          );
+        }),
       ],
     );
   }

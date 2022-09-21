@@ -6,12 +6,15 @@ import 'package:music_player/src/modules/player/enums/repeat_mode.dart';
 import 'package:music_player/src/modules/player/models/progress_bar_model.dart';
 import 'package:music_player/src/modules/player/models/repeat_model.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
+import 'package:music_player/src/services/sound/sound_handler.dart';
 
 class PlayerControlBloc extends GetxController {
   Rx<bool> isPlaying = false.obs;
 
   Rx<bool> isFirst = false.obs;
   Rx<bool> isLast = false.obs;
+
+  Rx<bool> shuffleMode = false.obs;
 
   Rx<SongModel?> currentSong = Rx<SongModel?>(null);
   Rx<ProgressBarState> duration = ProgressBarState.initial().obs;
@@ -38,6 +41,8 @@ class PlayerControlBloc extends GetxController {
       duration(duration.value.copyWith(total: item?.duration));
     });
 
+    audioHandler.shuffleMode.stream.listen(shuffleMode);
+
     audioHandler.playbackState.listen((item) {
       duration(duration.value.copyWith(buffered: item.bufferedPosition));
     });
@@ -45,17 +50,25 @@ class PlayerControlBloc extends GetxController {
     audioHandler.queue.listen((playlist) {
       _updateSkipBtns();
     });
+    audioHandler.mediaItem.listen((value) {
+      _updateSkipBtns();
+    });
+    audioHandler.repeatMode.stream.listen((event) {
+      _updateSkipBtns();
+    });
   }
 
   void _updateSkipBtns() {
     final mediaItem = audioHandler.mediaItem.value;
     final playlist = audioHandler.queue.value;
+    final loopMode = audioHandler.mode;
+    final isRepeated = loopMode == RepeatMode.playlist;
     if (playlist.length < 2 || mediaItem == null) {
-      isFirst(true);
-      isLast(true);
+      isFirst(true && !isRepeated);
+      isLast(true && !isRepeated);
     } else {
-      isFirst(playlist.first == mediaItem);
-      isLast(playlist.last == mediaItem);
+      isFirst(playlist.first.id == mediaItem.id && !isRepeated);
+      isLast(playlist.last.id == mediaItem.id && !isRepeated);
     }
   }
 
@@ -79,8 +92,10 @@ class PlayerControlBloc extends GetxController {
   void repeat() {
     repeatModel.update();
     final mode = repeatModel.mode.value;
-    audioHandler.setRepeatMode(
-      AudioServiceRepeatModeAdapter.fromRepeatMode(mode).data,
-    );
+    audioHandler
+        .setRepeatMode(AudioServiceRepeatModeAdapter.fromRepeatMode(mode).data);
   }
+
+  void shuffle() => audioHandler
+      .setShuffleMode(AudioServiceShuffleModeUtil.fromBool(!shuffleMode.value));
 }

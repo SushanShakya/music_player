@@ -33,7 +33,6 @@ class FancySeekIndicator extends StatefulWidget {
 
 class _FancySeekIndicatorState extends State<FancySeekIndicator> {
   static Color activeColor = scaffoldColor;
-  static Color inactiveColor = const Color(0xffB3B3B3);
 
   late List<SeekItemSize> _items;
 

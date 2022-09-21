@@ -3,15 +3,22 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/modules/player/adapters/just_audio_repeat_adapter.dart';
+import 'package:music_player/src/modules/player/adapters/repeat_mode_adapter.dart';
 import 'package:music_player/src/modules/songs/adapters/audio_source_adapter.dart';
 import 'package:music_player/src/modules/songs/adapters/media_item_adapter.dart';
 import 'package:music_player/src/modules/songs/adapters/song_model_adapter.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
 
+import '../../modules/player/enums/repeat_mode.dart';
+
 class SoundHandler extends BaseAudioHandler with SeekHandler {
   late AudioPlayer _player;
   late StreamController<SongModel> currentSong;
   late StreamController<Duration> duration;
+  late StreamController<RepeatMode> repeatMode;
+  late StreamController<bool> shuffleMode;
+
+  late RepeatMode mode;
 
   late List<SongModel> playlist;
   final _playlist = ConcatenatingAudioSource(children: []);
@@ -38,6 +45,9 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
       updatePosition: _player.position,
       bufferedPosition: _player.bufferedPosition,
       speed: _player.speed,
+      shuffleMode: AudioServiceShuffleModeUtil.fromBool(
+        _player.shuffleModeEnabled,
+      ),
     ));
   }
 
@@ -50,19 +60,36 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
   }
 
   SoundHandler() {
+    mode = RepeatMode.off;
     playlist = [];
     currentSong = StreamController.broadcast();
     duration = StreamController.broadcast();
+    repeatMode = StreamController.broadcast();
+    shuffleMode = StreamController.broadcast();
     _player = AudioPlayer()
       ..playbackEventStream.listen(_broadcastState)
       ..processingStateStream.listen((e) {
         if (e == ProcessingState.completed) skipToNext();
       })
+      ..shuffleModeEnabledStream.listen(shuffleMode.sink.add)
+      ..loopModeStream.listen((mode) {
+        this.mode = RepeatModeAdapter.fromLoopMode(mode).data;
+        repeatMode.sink.add(this.mode);
+      })
       ..currentIndexStream.listen((i) {
         if (i == null) return;
         final playlist = queue.value;
         if (playlist.isEmpty) return;
+        if (_player.shuffleModeEnabled) {
+          i = _player.shuffleIndices![i];
+        }
         mediaItem.add(playlist[i]);
+      })
+      ..sequenceStateStream.listen((SequenceState? state) {
+        final seq = state?.effectiveSequence;
+        if (seq == null || seq.isEmpty) return;
+        final items = seq.map((e) => e.tag as MediaItem);
+        queue.add(items.toList());
       });
     mediaItem.listen((item) {
       if (item == null) return;
@@ -122,24 +149,64 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
   Future<void> pause() => _player.pause();
 
   @override
-  Future<void> stop() => _player.stop();
+  Future<void> stop() async {
+    await _player.stop();
+    return super.stop();
+  }
 
   @override
   Future<void> seek(Duration position) => _player.seek(position);
 
   @override
-  Future<void> skipToNext() {
+  Future<void> skipToNext() async {
     super.skipToNext();
-    return _player.seekToNext();
+    LoopMode mode = _player.loopMode;
+    if (mode == LoopMode.one) {
+      await setRepeatMode(AudioServiceRepeatMode.none);
+    }
+    await _player.seekToNext();
+    if (mode == LoopMode.one) {
+      await setRepeatMode(AudioServiceRepeatMode.one);
+    }
   }
 
   @override
-  Future<void> skipToPrevious() {
+  Future<void> skipToPrevious() async {
     super.skipToPrevious();
-    return _player.seekToPrevious();
+    LoopMode mode = _player.loopMode;
+    if (mode == LoopMode.one) {
+      await setRepeatMode(AudioServiceRepeatMode.none);
+    }
+    await _player.seekToPrevious();
+    if (mode == LoopMode.one) {
+      await setRepeatMode(AudioServiceRepeatMode.one);
+    }
   }
 
   @override
   Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) => _player
       .setLoopMode(JustAudioRepeatAdapter.fromAudioService(repeatMode).data);
+
+  @override
+  Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) =>
+      _player.setShuffleModeEnabled(shuffleMode.boolean);
+}
+
+extension AudioServiceShuffleModeUtil on AudioServiceShuffleMode {
+  bool get boolean {
+    switch (this) {
+      case AudioServiceShuffleMode.none:
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  static AudioServiceShuffleMode fromBool(bool value) {
+    if (!value) {
+      return AudioServiceShuffleMode.none;
+    } else {
+      return AudioServiceShuffleMode.all;
+    }
+  }
 }

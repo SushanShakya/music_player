@@ -19,9 +19,13 @@ class ContentResolverSongFetchRepo extends ISongFetchRepo {
           (await cursor!.batchedGet().getCount().commit()).first as int;
       final batch = SongModel.createBatch(cursor);
       final songsData = await batch.commitRange(0, songCount);
-      return List<SongModel>.from(
+      List<SongModel> songs = List<SongModel>.from(
         songsData.map((data) => SongModelAdapter.fromMediaStore(data).data),
       );
+      songs.sort((a, b) {
+        return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+      });
+      return songs;
     } finally {
       cursor?.close();
     }

@@ -2,10 +2,10 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:music_player/src/modules/common/views/curved_scaffold.dart';
 import 'package:music_player/src/modules/player/blocs/player_control_bloc.dart';
 import 'package:music_player/src/modules/player/views/default_home_view.dart';
 import 'package:music_player/src/modules/songs/components/floating_song_indicator.dart';
-import 'package:music_player/src/res/dimens.dart';
 import 'package:music_player/src/services/sound/sound_handler.dart';
 
 late SoundHandler audioHandler;
@@ -38,8 +38,7 @@ class MusicPlayer extends StatelessWidget {
         fontFamily: 'Poppins',
       ),
       debugShowCheckedModeBanner: false,
-      home: ClipRRect(
-        borderRadius: BorderRadius.circular(appBorderRadius),
+      home: CurvedScaffold(
         child: DefaultHomeView(),
         // child: Dummy(),
       ),
