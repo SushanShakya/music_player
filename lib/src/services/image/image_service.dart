@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:android_content_provider/android_content_provider.dart';
 import 'package:flutter/services.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ImageService {
@@ -17,13 +17,16 @@ class ImageService {
     return file;
   }
 
-  static Future<bool> checkExists(String uri) async {
+  static Future<bool> checkExists(String id) async {
     try {
-      var data = await AndroidContentResolver.instance.loadThumbnail(
-        uri: uri,
-        width: 100,
-        height: 100,
+      var data = await OnAudioQuery().queryArtwork(
+        int.parse(id),
+        ArtworkType.AUDIO,
+        format: ArtworkFormat.JPEG,
+        size: 100,
+        quality: 100,
       );
+      if (data == null) throw 'e';
       return true;
     } catch (e) {
       return false;

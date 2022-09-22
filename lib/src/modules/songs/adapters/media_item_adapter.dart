@@ -30,7 +30,7 @@ class MediaItemAdapter {
       artUri: Uri.parse(song.artUri),
       duration: Duration(milliseconds: int.parse(song.duration)),
     );
-    if (await ImageService.checkExists(song.uri)) {
+    if (await ImageService.checkExists(song.id)) {
       return data;
     } else {
       return data.copyWith(
@@ -41,7 +41,7 @@ class MediaItemAdapter {
 
   static Future<MediaItem> createFromMediaItem(MediaItem song) async {
     var data = song;
-    if (await ImageService.checkExists(song.artUri.toString())) {
+    if (await ImageService.checkExists(song.id)) {
       return data;
     } else {
       return data.copyWith(

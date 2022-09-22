@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+import 'package:get/get.dart';
 import 'package:music_player/src/modules/common/components/tap_effect.dart';
+import 'package:music_player/src/modules/songs/blocs/scroll_bloc.dart';
+import 'package:music_player/src/modules/songs/components/song_widget.dart';
 import 'package:music_player/src/modules/songs/models/header_key.dart';
-import 'package:sticky_headers/sticky_headers.dart';
 
-import 'package:music_player/src/modules/songs/blocs/small_song_listing_widget.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
 import 'package:music_player/src/res/colors.dart';
 import 'package:music_player/src/res/styles.dart';
 
+import '../../../../constants/assets.dart';
 import '../models/labelled_songs.dart';
-import 'dialog/alphabetic_dialog.dart';
 
 class LabeledSongListingWidget extends StatefulWidget {
   final List<SongModel> songs;
@@ -74,51 +76,150 @@ class _LabeledSongListingWidgetState extends State<LabeledSongListingWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final x = Get.find<SongScrollBloc>();
+    final width = MediaQuery.of(context).size.width;
     return CustomScrollView(
+      controller: x.controller,
+      physics: const BouncingScrollPhysics(),
       slivers: [
-        SliverList(
-          delegate: SliverChildBuilderDelegate((c, i) {
-            var labeledSong = labeledSongs[i];
-            // return SmallSongListingWidget(songs: labeledSong.songs);
-            return Padding(
-              // key: keys[i].key,
-              padding: (i == (labeledSongs.length - 1))
-                  ? const EdgeInsets.only(bottom: 60.0)
-                  : EdgeInsets.zero,
-              child: StickyHeader(
-                header: _HeaderWidget(
-                  title: labeledSong.title,
-                  onTap: () async {
-                    String? letter = await showAlphabeticDialog(context);
-                    if (letter == null) return;
-                    // try {
-                    //   HeaderKey key = keys.firstWhere((e) => e.tag == letter);
-                    //   Scrollable.ensureVisible(
-                    //     key.key.currentContext!,
-                    //     duration: const Duration(milliseconds: 200),
-                    //   );
-                    // } catch (e) {
-                    //   print(e);
-                    //   showIconedNotification(
-                    //     context: context,
-                    //     icon: FeatherIcons.alertOctagon,
-                    //     text: 'No Song Found',
-                    //   );
-                    // }
-                  },
-                ),
-                content: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: SmallSongListingWidget(
-                    songs: labeledSong.songs,
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: width,
+            child: Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(Assets.no_image),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-            );
-          }, childCount: labeledSongs.length),
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [Color(0xffFAFAFA), Colors.transparent],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 20,
+                  left: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "All Songs",
+                      style: headerStyle.copyWith(
+                        shadows: [
+                          const Shadow(
+                            color: Colors.white,
+                            blurRadius: 15,
+                            offset: Offset(1, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
+        ...List.generate(labeledSongs.length, (i) {
+          var labeledSong = labeledSongs[i];
+          var songs = labeledSong.songs;
+          return SliverStickyHeader(
+            key: keys[i].key,
+            header: _HeaderWidget(
+              title: labeledSong.title,
+              onTap: () {},
+              // onTap: () async {
+              //   String? letter = await showAlphabeticDialog(context);
+              //   if (letter == null) return;
+              //   try {
+              //     HeaderKey key = keys.firstWhere((e) => e.tag == letter);
+              //     Scrollable.ensureVisible(
+              //       key.key.currentContext!,
+              //       duration: const Duration(milliseconds: 200),
+              //       alignmentPolicy:
+              //           ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              //     );
+              //   } catch (e) {
+              //     showIconedNotification(
+              //       context: context,
+              //       icon: FeatherIcons.alertOctagon,
+              //       text: 'No Song Found',
+              //     );
+              //   }
+              // },
+            ),
+            sliver: SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (c, j) {
+                    var song = songs[j];
+                    return Padding(
+                      padding: j == (songs.length - 1)
+                          ? EdgeInsets.zero
+                          : const EdgeInsets.only(bottom: 10.0),
+                      child: SongWidget(song: song),
+                    );
+                  },
+                  childCount: songs.length,
+                ),
+              ),
+            ),
+          );
+        })
       ],
+      // slivers: [
+      //   SliverList(
+      //     delegate: SliverChildBuilderDelegate((c, i) {
+      //       var labeledSong = labeledSongs[i];
+      //       // return SmallSongListingWidget(songs: labeledSong.songs);
+      //       return Padding(
+      //         // key: keys[i].key,
+      //         padding: (i == (labeledSongs.length - 1))
+      //             ? const EdgeInsets.only(bottom: 60.0)
+      //             : EdgeInsets.zero,
+      //             child:
+      //         // child: StickyHeader(
+      //         //   header: _HeaderWidget(
+      //         //     title: labeledSong.title,
+      //         //     onTap: () async {
+      //         //       String? letter = await showAlphabeticDialog(context);
+      //         //       if (letter == null) return;
+      //         //       // try {
+      //         //       //   HeaderKey key = keys.firstWhere((e) => e.tag == letter);
+      //         //       //   Scrollable.ensureVisible(
+      //         //       //     key.key.currentContext!,
+      //         //       //     duration: const Duration(milliseconds: 200),
+      //         //       //   );
+      //         //       // } catch (e) {
+      //         //       //   print(e);
+      //         //       //   showIconedNotification(
+      //         //       //     context: context,
+      //         //       //     icon: FeatherIcons.alertOctagon,
+      //         //       //     text: 'No Song Found',
+      //         //       //   );
+      //         //       // }
+      //         //     },
+      //         //   ),
+      //         //   content: Padding(
+      //         //     padding:
+      //         //         const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      //         //     child: SmallSongListingWidget(
+      //         //       songs: labeledSong.songs,
+      //         //     ),
+      //         //   ),
+      //         // ),
+      //       );
+      //     }, childCount: labeledSongs.length),
+      //   ),
+      // ],
     );
   }
 }
