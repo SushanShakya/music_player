@@ -22,9 +22,6 @@ class ImageService {
       var data = await OnAudioQuery().queryArtwork(
         int.parse(id),
         ArtworkType.AUDIO,
-        format: ArtworkFormat.JPEG,
-        size: 200,
-        quality: 100,
       );
       if (data == null) throw 'e';
       return true;
