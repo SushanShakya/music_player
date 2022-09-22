@@ -23,7 +23,7 @@ class ImageService {
         int.parse(id),
         ArtworkType.AUDIO,
         format: ArtworkFormat.JPEG,
-        size: 100,
+        size: 200,
         quality: 100,
       );
       if (data == null) throw 'e';
