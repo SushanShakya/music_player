@@ -20,7 +20,7 @@ class _BackAndForthAnimationWrapperState
   void initState() {
     super.initState();
     controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500))
+        vsync: this, duration: const Duration(milliseconds: 350))
       ..repeat(
         reverse: true,
       );
@@ -31,13 +31,20 @@ class _BackAndForthAnimationWrapperState
   }
 
   @override
+  void dispose() {
+    controller.stop();
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animation,
       builder: (c, child) {
         var t = animation.value;
         return Transform.translate(
-          offset: Offset((-1 * (1 - t)) + (1 * t), 0),
+          offset: Offset((-2 * (1 - t)) + (2 * t), 0),
           child: child,
         );
       },
