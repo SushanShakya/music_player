@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:music_player/src/modules/player/blocs/player_control_bloc.dart';
 import 'package:music_player/src/modules/player/views/player_view.dart';
 import 'package:music_player/src/modules/songs/blocs/song_play_bloc.dart';
+import 'package:music_player/src/modules/songs/views/recent_song_listing_view.dart';
 import 'package:music_player/src/modules/songs/views/songs_listing_view.dart';
 import 'package:music_player/src/services/navigation/navigation_service.dart';
 
@@ -23,7 +24,7 @@ class DefaultHomeViewState extends State<DefaultHomeView> {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    controller = PageController();
+    controller = PageController(initialPage: 1);
     Get.put(SongFetchBloc());
     playerControlBloc = Get.put(PlayerControlBloc());
     songPlayBloc = Get.put(SongPlayBloc());
@@ -48,6 +49,7 @@ class DefaultHomeViewState extends State<DefaultHomeView> {
           physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           children: [
+            RecentSongListingView(),
             PlayerView(
               onAllSongsClick: () {
                 controller.animateToPage(

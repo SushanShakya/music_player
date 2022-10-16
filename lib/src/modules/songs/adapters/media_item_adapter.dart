@@ -13,7 +13,11 @@ class MediaItemAdapter {
       id: song.id,
       title: song.subtitle,
       displayTitle: song.title,
-      extras: {'uri': song.uri, 'album_id': song.album},
+      extras: {
+        'uri': song.uri,
+        'album_id': song.album,
+        'created': song.created
+      },
       album: song.album,
       artUri: Uri.parse(song.artUri),
       duration: Duration(milliseconds: int.parse(song.duration)),
@@ -25,7 +29,11 @@ class MediaItemAdapter {
       id: song.id,
       title: song.subtitle,
       displayTitle: song.title,
-      extras: {'uri': song.uri, 'album_id': song.album},
+      extras: {
+        'uri': song.uri,
+        'album_id': song.album,
+        'created': song.created
+      },
       album: song.album,
       artUri: Uri.parse(song.artUri),
       duration: Duration(milliseconds: int.parse(song.duration)),

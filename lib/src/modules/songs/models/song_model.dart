@@ -12,6 +12,10 @@ class SongModel extends Equatable {
   final String title;
   final String subtitle;
   final String duration;
+  final int created;
+
+  DateTime get createdDate =>
+      DateTime.fromMillisecondsSinceEpoch(created * 1000);
 
   String get artUri => 'content://media/external/audio/media/$id/albumart';
 
@@ -37,6 +41,7 @@ class SongModel extends Equatable {
     required this.title,
     required this.subtitle,
     required this.duration,
+    required this.created,
   });
 
   // From https://developer.android.com/reference/android/provider/MediaStore.MediaColumns
@@ -48,6 +53,7 @@ class SongModel extends Equatable {
     'title',
     'duration',
     '_display_name',
+    "date_added",
   ];
 
   static NativeCursorGetBatch createBatch(NativeCursor cursor) =>
@@ -58,7 +64,7 @@ class SongModel extends Equatable {
         ..getString(3)
         ..getString(4)
         ..getString(5)
-        ..getString(6);
+        ..getString(6).getInt(7);
 
   @override
   List<Object?> get props => [id, imageUrl, title, subtitle, duration, uri];

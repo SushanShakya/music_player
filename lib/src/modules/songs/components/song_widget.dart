@@ -4,7 +4,6 @@ import 'package:music_player/src/modules/common/components/tap_effect.dart';
 import 'package:music_player/src/modules/player/blocs/player_control_bloc.dart';
 import 'package:music_player/src/modules/player/components/waveform_widget.dart';
 
-import 'package:music_player/src/modules/songs/blocs/song_play_bloc.dart';
 import 'package:music_player/src/modules/songs/components/song_image.dart';
 import 'package:music_player/src/modules/songs/models/song_model.dart';
 import 'package:music_player/src/res/colors.dart';
@@ -12,19 +11,18 @@ import 'package:music_player/src/res/styles.dart';
 
 class SongWidget extends StatelessWidget {
   final SongModel song;
+  final void Function() onTap;
   const SongWidget({
     Key? key,
     required this.song,
+    required this.onTap,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<SongPlayBloc>();
     final ctrl2 = Get.find<PlayerControlBloc>();
     final width = MediaQuery.of(context).size.width;
     return TapEffect(
-      onClick: () {
-        ctrl.playSong(song);
-      },
+      onClick: onTap,
       child: Row(
         children: [
           Obx(() {

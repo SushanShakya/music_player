@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/modules/player/adapters/just_audio_repeat_adapter.dart';
 import 'package:music_player/src/modules/player/adapters/repeat_mode_adapter.dart';
+import 'package:music_player/src/modules/player/enums/playlist_mode.dart';
 import 'package:music_player/src/modules/songs/adapters/audio_source_adapter.dart';
 import 'package:music_player/src/modules/songs/adapters/media_item_adapter.dart';
 import 'package:music_player/src/modules/songs/adapters/song_model_adapter.dart';
@@ -17,8 +18,10 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
   late StreamController<Duration> duration;
   late StreamController<RepeatMode> repeatMode;
   late StreamController<bool> shuffleMode;
+  late StreamController<PlaylistMode> playlistMode;
 
   late RepeatMode mode;
+  late PlaylistMode currentPlaylistMode;
 
   late List<SongModel> playlist;
   final _playlist = ConcatenatingAudioSource(children: []);
@@ -61,11 +64,16 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
 
   SoundHandler() {
     mode = RepeatMode.off;
+    currentPlaylistMode = PlaylistMode.none;
     playlist = [];
     currentSong = StreamController.broadcast();
     duration = StreamController.broadcast();
     repeatMode = StreamController.broadcast();
     shuffleMode = StreamController.broadcast();
+    playlistMode = StreamController.broadcast()
+      ..stream.listen((mode) {
+        currentPlaylistMode = mode;
+      });
     _player = AudioPlayer()
       ..playbackEventStream.listen(_broadcastState)
       ..processingStateStream.listen((e) {
@@ -103,30 +111,38 @@ class SoundHandler extends BaseAudioHandler with SeekHandler {
     mediaItem.add(cur);
   }
 
-  Future<void> playSong(SongModel song) async {}
-
   Future<void> setSong(SongModel song) async {
+    print("---- Setting song");
+    print(song.title);
     List<MediaItem> songs = queue.value;
     int i = songs.indexWhere((e) => e.id == song.id);
+    print("---- Song Index");
+    print(i);
+    print('----- Song');
+    print(songs[i].title);
     await addToMediaItem(songs[i]);
-    _player.setAudioSource(_playlist, initialIndex: i);
+    await _player.setAudioSource(_playlist, initialIndex: i);
   }
 
-  Future<void> setPlaylist(List<SongModel> songs) async {
-    _playlist.clear();
+  Future<void> setPlaylist(List<SongModel> songs, PlaylistMode mode) async {
+    if (currentPlaylistMode == mode) return;
+    print('---- Setting playlist');
+    await _playlist.clear();
+    playlistMode.sink.add(mode);
     await addQueueItems(
       songs.map((e) => MediaItemAdapter.fromSongModel(e).data).toList(),
     );
-    setSong(songs.first);
+    print('---- Playlist Set');
   }
 
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
-    _playlist.addAll(
+    await _playlist.addAll(
       mediaItems.map((e) => AudioSourceAdapter.fromMediaItem(e).data).toList(),
     );
     final q = queue.value..addAll(mediaItems);
     queue.add(q);
+    print('---- Queue Added');
   }
 
   @override
